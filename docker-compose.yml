@@ -4,29 +4,114 @@ services:
     image: postgres:14.5
     restart: always
     volumes:
-      - ./data:/var/lib/postgresql/data
-      - ./data-replica:/var/lib/postgresql/data-replica
+      - data:/var/lib/postgresql/data
+      - data-replica:/var/lib/postgresql/data-replica
       - ./init-script/config:/etc/postgresql/config
       - ./init-script:/etc/postgresql/init-script
-      - ./ddl_init.sql:/docker-entrypoint-initdb.d/ddl_init.sql
+      - ./source_db/ddl_init.sql:/docker-entrypoint-initdb.d/ddl_init.sql
+      - ./init-script/init.sh:/docker-entrypoint-initdb.d/init.sh
     ports:
-      - "127.0.0.1:5432:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    # entrypoint: ["/bin/bash", "-c", "chmod +x /etc/postgresql/init-script/init.sh && /etc/postgresql/init-script/init.sh"]
+    # command: ["bin/bash chmod +x /etc/postgresql/init-script/init.sh && /etc/postgresql/init-script/init.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   postgres_replica:
     container_name: postgres_replica
     image: postgres:14.5
     restart: always
     volumes:
-      - ./data-replica:/var/lib/postgresql/data
+      - data-replica:/var/lib/postgresql/data
       - ./init-script/replica-config:/etc/postgresql/config
-      - ./ddl_init.sql:/docker-entrypoint-initdb.d/ddl_init.sql
+      - ./source_db/ddl_init.sql:/docker-entrypoint-initdb.d/ddl_init.sql
     ports:
-      - "127.0.0.1:5433:5432"
+      - "5433:5432"
+    depends_on:
+      postgres_master:
+        condition: service_healthy  # Wait for postgres_master to be healthy
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  dwh_dds:
+    container_name: dwh_dds
+    image: postgres:14.5
+    restart: always
+    volumes:
+      - dwh_dds_data:/var/lib/postgresql/data
+      # - ./init-script/replica-config:/etc/postgresql/config
+      - ./dds/ddl_init.sql:/docker-entrypoint-initdb.d/ddl_init.sql
+    ports:
+      - "5434:5432"
     depends_on:
       - postgres_master
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+
+  zookeeper:
+    image: zookeeper:3.7.0  # Use a more recent version
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+    restart: always
+
+  kafka:
+    image: bitnami/kafka:latest
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_SERVERS: zookeeper:2181
+      KAFKA_LISTENERS: INSIDE://0.0.0.0:9092,OUTSIDE://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://kafka:9092,OUTSIDE://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      # KAFKA_LOG_DIRS: /kafka/logs
+      KAFKA_NUM_PARTITIONS: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      ZOOKEEPER_CONNECT: zookeeper:2181
+    depends_on:
+      - zookeeper
+    restart: always
+
+  debezium:
+    image: debezium/connect:3.0.0.Final
+    ports:
+      - "8083:8083"
+    environment:
+      - BOOTSTRAP_SERVERS=kafka:9092
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+      - DEBEZIUM_POSTGRES_USER=postgres
+      - DEBEZIUM_POSTGRES_PASSWORD=postgres
+      - DEBEZIUM_POSTGRES_DB=postgres
+      - DEBEZIUM_POSTGRES_SERVICE=postgres_master
+      - DEBEZIUM_POSTGRES_PORT=5432
+    depends_on:
+      - kafka
+    restart: always
+    volumes:
+      - ./debezium/connector-setup.sh:/etc/kafka/connector-setup.sh
+    # command: ["/etc/kafka/connector-setup.sh"]
+
+volumes:
+  data:
+  data-replica:
+  dwh_dds_data:
