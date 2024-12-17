@@ -5,11 +5,14 @@ services:
     restart: always
     volumes:
       - data:/var/lib/postgresql/data
+      # Replication to slave
       - data-replica:/var/lib/postgresql/data-replica
       - ./init-script/config:/etc/postgresql/config
       - ./init-script:/etc/postgresql/init-script
       - ./source_db/ddl_init.sql:/docker-entrypoint-initdb.d/ddl_init.sql
-      - ./init-script/init.sh:/docker-entrypoint-initdb.d/init.sh
+      # - ./init-script/init.sh:/docker-entrypoint-initdb.d/init.sh
+      # Debezium connector
+      - ./debezium/pg-setup.sql:/docker-entrypoint-initdb.d/pg-setup.sql
     ports:
       - "5432:5432"
     environment:
@@ -91,6 +94,8 @@ services:
 
   debezium:
     image: debezium/connect:3.0.0.Final
+    # build:
+      # context: debezium-jdbc
     ports:
       - "8083:8083"
     environment:
@@ -99,8 +104,8 @@ services:
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
       - STATUS_STORAGE_TOPIC=my_connect_statuses
-      - DEBEZIUM_POSTGRES_USER=postgres
-      - DEBEZIUM_POSTGRES_PASSWORD=postgres
+      - DEBEZIUM_POSTGRES_USER=kafka_replica
+      - DEBEZIUM_POSTGRES_PASSWORD=kafka_replica
       - DEBEZIUM_POSTGRES_DB=postgres
       - DEBEZIUM_POSTGRES_SERVICE=postgres_master
       - DEBEZIUM_POSTGRES_PORT=5432
@@ -110,6 +115,29 @@ services:
     volumes:
       - ./debezium/connector-setup.sh:/etc/kafka/connector-setup.sh
     # command: ["/etc/kafka/connector-setup.sh"]
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    ports:
+      - "9000:9000"
+    environment:
+      - KAFKA_BROKERCONNECT=kafka:9092
+    depends_on:
+      - kafka
+    restart: always
+  
+  dmp_service:
+    build: ./dmp_service
+    environment:
+      - KAFKA_BROKERCONNECT=kafka:9092
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+      - POSTGRES_HOST=dwh_dds
+      - POSTGRES_PORT=5432
+    depends_on:
+      - kafka
+      - dwh_dds
 
 volumes:
   data:
