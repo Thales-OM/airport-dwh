@@ -1,5 +1,7 @@
+CREATE SCHEMA IF NOT EXISTS dwh_detailed;
+
 -- Hub для аэропортов
-CREATE TABLE IF NOT EXISTS Hub_Airports (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Hub_Airports (
     Airport_HK UUID PRIMARY KEY,                -- Хэш-ключ для уникальности
     Airport_Code CHAR(3) NOT NULL,              -- Бизнес-ключ (natural key)
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
@@ -7,7 +9,7 @@ CREATE TABLE IF NOT EXISTS Hub_Airports (
 );
 
 -- Hub для самолетов
-CREATE TABLE IF NOT EXISTS Hub_Aircrafts (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Hub_Aircrafts (
     Aircraft_HK UUID PRIMARY KEY,               -- Хэш-ключ для уникальности
     Aircraft_Code CHAR(3) NOT NULL,             -- Бизнес-ключ (natural key)
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
@@ -15,7 +17,7 @@ CREATE TABLE IF NOT EXISTS Hub_Aircrafts (
 );
 
 -- Hub для рейсов
-CREATE TABLE IF NOT EXISTS Hub_Flights (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Hub_Flights (
     Flight_HK UUID PRIMARY KEY,                 -- Хэш-ключ для уникальности
     Flight_ID INT NOT NULL,                     -- Бизнес-ключ
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
@@ -23,7 +25,7 @@ CREATE TABLE IF NOT EXISTS Hub_Flights (
 );
 
 -- Hub для бронирований
-CREATE TABLE IF NOT EXISTS Hub_Bookings (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Hub_Bookings (
     Booking_HK UUID PRIMARY KEY,                -- Хэш-ключ для уникальности
     Book_Ref CHAR(6) NOT NULL,                  -- Бизнес-ключ
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
@@ -31,7 +33,7 @@ CREATE TABLE IF NOT EXISTS Hub_Bookings (
 );
 
 -- Link для рейсов и аэропортов
-CREATE TABLE IF NOT EXISTS Link_Flights_Airports (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Link_Flights_Airports (
     Flights_Airports_HK UUID PRIMARY KEY,       -- Хэш-ключ
     Flight_HK UUID NOT NULL,                    -- Ссылка на Hub_Flights
     Departure_Airport_HK UUID NOT NULL,         -- Ссылка на Hub_Airports
@@ -41,7 +43,7 @@ CREATE TABLE IF NOT EXISTS Link_Flights_Airports (
 );
 
 -- Link для билетов и бронирований
-CREATE TABLE IF NOT EXISTS Link_Tickets_Bookings (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Link_Tickets_Bookings (
     Tickets_Bookings_HK UUID PRIMARY KEY,       -- Хэш-ключ
     Ticket_No CHAR(13) NOT NULL,                -- Номер билета
     Booking_HK UUID NOT NULL,                   -- Ссылка на Hub_Bookings
@@ -50,7 +52,7 @@ CREATE TABLE IF NOT EXISTS Link_Tickets_Bookings (
 );
 
 -- Link для билетов и рейсов
-CREATE TABLE IF NOT EXISTS Link_Tickets_Flights (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Link_Tickets_Flights (
     Tickets_Flights_HK UUID PRIMARY KEY,        -- Хэш-ключ
     Ticket_HK UUID NOT NULL,                    -- Ссылка на Hub_Tickets
     Flight_HK UUID NOT NULL,                    -- Ссылка на Hub_Flights
@@ -59,7 +61,7 @@ CREATE TABLE IF NOT EXISTS Link_Tickets_Flights (
 );
 
 -- Сателлит для аэропортов
-CREATE TABLE IF NOT EXISTS Sat_Airports (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Airports (
     Airport_HK UUID NOT NULL,                   -- Ссылка на Hub_Airports
     Airport_Name TEXT NOT NULL,
     City TEXT NOT NULL,
@@ -73,7 +75,7 @@ CREATE TABLE IF NOT EXISTS Sat_Airports (
 );
 
 -- Сателлит для самолетов
-CREATE TABLE IF NOT EXISTS Sat_Aircrafts (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Aircrafts (
     Aircraft_HK UUID NOT NULL,                  -- Ссылка на Hub_Aircrafts
     Model JSONB NOT NULL,
     Range INT NOT NULL,
@@ -84,7 +86,7 @@ CREATE TABLE IF NOT EXISTS Sat_Aircrafts (
 );
 
 -- Сателлит для рейсов
-CREATE TABLE IF NOT EXISTS Sat_Flights (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Flights (
     Flight_HK UUID NOT NULL,                    -- Ссылка на Hub_Flights
     Flight_No CHAR(6) NOT NULL,
     Scheduled_Departure TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -99,7 +101,7 @@ CREATE TABLE IF NOT EXISTS Sat_Flights (
 );
 
 -- Сателлит для бронирований
-CREATE TABLE IF NOT EXISTS Sat_Bookings (
+CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Bookings (
     Booking_HK UUID NOT NULL,                   -- Ссылка на Hub_Bookings
     Book_Date TIMESTAMP WITH TIME ZONE NOT NULL,
     Total_Amount NUMERIC(10, 2) NOT NULL,
