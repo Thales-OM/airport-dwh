@@ -82,12 +82,7 @@ CREATE TABLE IF NOT EXISTS public.tickets
 
 ALTER TABLE IF EXISTS public.tickets
     OWNER to postgres;
-	
-	
-	
-	
 
-	
 CREATE TABLE IF NOT EXISTS public.ticket_flights
 (
     ticket_no character(13) REFERENCES  tickets (ticket_no) NOT NULL,
@@ -96,8 +91,6 @@ CREATE TABLE IF NOT EXISTS public.ticket_flights
 	amount numeric(10,2) NOT NULL,
     PRIMARY KEY (ticket_no, flight_id)
 );	
-
-
 
 ALTER TABLE IF EXISTS public.ticket_flights
     OWNER to postgres;

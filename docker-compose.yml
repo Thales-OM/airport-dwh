@@ -188,6 +188,7 @@ services:
       ETL_TARGET_CONN_ID: 'db_analytical'
     volumes:
       - ./airflow/dags:/opt/airflow/dags
+      - ./airflow/include:/opt/airflow/include
       # - ./logs:/opt/airflow/logs
       # - ./plugins:/opt/airflow/plugins
     ports:

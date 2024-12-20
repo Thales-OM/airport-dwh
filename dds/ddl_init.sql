@@ -71,6 +71,7 @@ CREATE TABLE IF NOT EXISTS dwh_detailed.Link_Tickets_Flights (
 -- Сателлит для аэропортов
 CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Airports (
     Airport_HK UUID NOT NULL,                   -- Ссылка на Hub_Airports
+    Airport_Code CHARACTER(3) NOT NULL,
     Airport_Name TEXT NOT NULL,
     City TEXT NOT NULL,
     Coordinates_Lon DOUBLE PRECISION NOT NULL,
@@ -85,6 +86,7 @@ CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Airports (
 -- Сателлит для самолетов
 CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Aircrafts (
     Aircraft_HK UUID NOT NULL,                  -- Ссылка на Hub_Aircrafts
+    Aircraft_Code CHARACTER(3) NOT NULL,
     Model JSONB NOT NULL,
     Range INT NOT NULL,
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
@@ -117,4 +119,26 @@ CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Bookings (
     Record_Source VARCHAR(50) NOT NULL,        -- Источник данных
     Effective_From TIMESTAMP WITH TIME ZONE NOT NULL,
     Effective_To TIMESTAMP WITH TIME ZONE
+);
+
+-- Сателлит для билетов
+CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Tickets (
+    Ticket_HK UUID NOT NULL,                   -- Ссылка на Hub_Tickets
+    passenger_id character VARYING(20) NOT NULL,
+	passanger_name text NOT NULL,
+	contact_data jsonb DEFAULT null,
+    Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
+    Record_Source VARCHAR(50) NOT NULL,        -- Источник данных
+    Effective_From TIMESTAMP WITH TIME ZONE NOT NULL,
+    Effective_To TIMESTAMP WITH TIME ZONE
+);
+
+CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Ticket_Flights (
+    Tickets_Flights_HK UUID NOT NULL,           -- Ссылка на Link_Tickets_Flights
+    Fare_Conditions NUMERIC(10, 2) NOT NULL,   -- Условия тарифа
+    Amount NUMERIC(10, 2) NOT NULL,             -- Сумма
+    Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
+    Record_Source VARCHAR(50) NOT NULL,         -- Источник данных
+    Effective_From TIMESTAMP WITH TIME ZONE NOT NULL, -- Время начала действия записи
+    Effective_To TIMESTAMP WITH TIME ZONE        -- Время окончания действия записи
 );

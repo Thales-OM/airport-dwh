@@ -46,5 +46,4 @@ LEFT JOIN
     dwh_detailed.Link_Tickets_Flights ltf ON f.Flight_HK = ltf.Flight_HK
 GROUP BY 
     LEAST(a1.Airport_Code, a2.Airport_Code), GREATEST(a1.Airport_Code, a2.Airport_Code)
-
 ;
