@@ -29,7 +29,15 @@ CREATE TABLE IF NOT EXISTS dwh_detailed.Hub_Bookings (
     Booking_HK UUID PRIMARY KEY,                -- Хэш-ключ для уникальности
     Book_Ref CHAR(6) NOT NULL,                  -- Бизнес-ключ
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
-    Record_Source VARCHAR(50) NOT NULL         -- Источник данных
+    Record_Source VARCHAR(50) NOT NULL          -- Источник данных
+);
+
+-- Hub для билетов
+CREATE TABLE IF NOT EXISTS dwh_detailed.Hub_Tickets (
+    Ticket_HK UUID PRIMARY KEY,                 -- Хэш-ключ для уникальности
+    Ticket_No CHAR(13) NOT NULL,                -- Бизнес-ключ
+    Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL,  -- Временная метка загрузки
+    Record_Source VARCHAR(50) NOT NULL          -- Источник данных
 );
 
 -- Link для рейсов и аэропортов
@@ -45,7 +53,7 @@ CREATE TABLE IF NOT EXISTS dwh_detailed.Link_Flights_Airports (
 -- Link для билетов и бронирований
 CREATE TABLE IF NOT EXISTS dwh_detailed.Link_Tickets_Bookings (
     Tickets_Bookings_HK UUID PRIMARY KEY,       -- Хэш-ключ
-    Ticket_No CHAR(13) NOT NULL,                -- Номер билета
+    Ticket_HK UUID NOT NULL,                -- Ссылка на Hub_Tickets
     Booking_HK UUID NOT NULL,                   -- Ссылка на Hub_Bookings
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
     Record_Source VARCHAR(50) NOT NULL         -- Источник данных
