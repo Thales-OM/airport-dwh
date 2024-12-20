@@ -1,3 +1,6 @@
+# include:
+  # - ./airflow/docker-compose.airflow.yaml # Apache Airflow services
+
 services:
   postgres_master:
     container_name: postgres_master
@@ -25,7 +28,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
 
   postgres_replica:
     container_name: postgres_replica
@@ -141,19 +144,42 @@ services:
       - dwh_dds
 
   db_analytical:
-    container_name: dwh_dds
+    container_name: db_analytical
     image: postgres:14.5
     restart: always
     volumes:
       - db_analytical_data:/var/lib/postgresql/data
+      - ./db_analytical/ddl_init.sql:/docker-entrypoint-initdb.d/ddl_init.sql
     ports:
       - "5435:5432"
-    depends_on:
-      - dwh_dds
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
+  
+  airflow:
+    image: apache/airflow:2.10.4
+    restart: always
+    environment:
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      _AIRFLOW_DB_MIGRATE: 'true'
+      _AIRFLOW_WWW_USER_CREATE: 'true'
+      _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
+      _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
+      _PIP_ADDITIONAL_REQUIREMENTS: ''
+      AIRFLOW_CONN_DWH_DDS: '{"conn_type": "postgres", "login": "postgres", "password": "postgres", "host": "dwh_dds", "port": 5432, "schema": "dwh_detailed"}'
+      AIRFLOW_CONN_DB_ANALYTICAL: '{"conn_type": "postgres", "login": "postgres", "password": "postgres", "host": "db_analytical", "port": 5432, "schema": "presentation"}'
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+      # - ./logs:/opt/airflow/logs
+      # - ./plugins:/opt/airflow/plugins
+    ports:
+      - "8080:8080"
+    depends_on:
+      - dwh_dds
+      - db_analytical
+    command: ["airflow", "standalone"]  # Start the Airflow webserver
+    # command: -c "airflow webserver && airflow scheduler && airflow worker && airflow triggerer && airflow initd"
 
 volumes:
   data:

@@ -246,9 +246,14 @@ services:
       _AIRFLOW_WWW_USER_USERNAME: ${_AIRFLOW_WWW_USER_USERNAME:-airflow}
       _AIRFLOW_WWW_USER_PASSWORD: ${_AIRFLOW_WWW_USER_PASSWORD:-airflow}
       _PIP_ADDITIONAL_REQUIREMENTS: ''
+      AIRFLOW_CONN_DWH_DDS: '{"conn_type": "postgres", "login": "postgres", "password": "postgres", "host": "dwh_dds", "port": 5432, "schema": "dwh_detailed"}'
+      AIRFLOW_CONN_DB_ANALYTICAL: '{"conn_type": "postgres", "login": "postgres", "password": "postgres", "host": "db_analytical", "port": 5432, "schema": "presentation"}'
     user: "0:0"
     volumes:
       - ${AIRFLOW_PROJ_DIR:-.}:/sources
+    depends_on:
+      - dwh_dds
+      - db_analytical
 
   airflow-cli:
     <<: *airflow-common
@@ -287,3 +292,4 @@ services:
 
 volumes:
   postgres-db-volume:
+  

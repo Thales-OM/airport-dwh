@@ -1,6 +1,6 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 import psycopg2
 
@@ -25,8 +25,10 @@ def load():
 
 default_args = {
     'owner': 'airflow',
-    'start_date': datetime(2024, 12, 19),
-    'retries': 1,
+    'depends_on_past': False,
+    'start_date': datetime(2024, 12, 1),
+    'retries': 3,
+    'retry_delay': timedelta(minutes=1),
 }
 
 dag = DAG('etl_dag', default_args=default_args, schedule_interval='@daily')
