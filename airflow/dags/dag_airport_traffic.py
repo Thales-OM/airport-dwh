@@ -7,7 +7,7 @@ import os
 # Define the function for the Extract and Transform stage
 def extract_transform_data(**kwargs):
     # Read the SQL query from the file
-    sql_file_path = '/opt/airflow/include/select_1.sql'
+    sql_file_path = '/opt/airflow/include/select_2.sql'
     with open(sql_file_path, 'r') as file:
         select_query = file.read()
 
@@ -39,22 +39,22 @@ def load_data(**kwargs):
 
     # Create a temporary table to hold the extracted data
     target_cursor.execute("""
-        CREATE TEMP TABLE temp_frequent_flyers AS
-        SELECT * FROM presentation.frequent_flyers WHERE false;  -- Create an empty table with the same structure
+        CREATE TEMP TABLE temp_airport_traffic AS
+        SELECT * FROM presentation.airport_traffic WHERE false;  -- Create an empty table with the same structure
     """)
 
     # Insert the extracted data into the temporary table
-    insert_temp_query = "INSERT INTO temp_frequent_flyers VALUES %s"
+    insert_temp_query = "INSERT INTO temp_airport_traffic VALUES %s"
     target_cursor.executemany(insert_temp_query, extracted_data)
 
     # Insert data from the temporary table into the target table
     target_cursor.execute("""
-        INSERT INTO presentation.frequent_flyers
-        SELECT * FROM temp_frequent_flyers;
+        INSERT INTO presentation.airport_traffic
+        SELECT * FROM temp_airport_traffic;
     """)
 
     # Drop the temporary table
-    target_cursor.execute("DROP TABLE temp_frequent_flyers;")
+    target_cursor.execute("DROP TABLE temp_airport_traffic;")
 
     # Commit the changes and close the connection
     target_conn.commit()
@@ -68,7 +68,7 @@ default_args = {
 }
 
 dag = DAG(
-    'dag_frequent_flyers',
+    'dag_airport_traffic',
     default_args=default_args,
     description='An ETL DAG to transfer data from source to target DB',
     schedule_interval='@daily',  # Run daily at midnight

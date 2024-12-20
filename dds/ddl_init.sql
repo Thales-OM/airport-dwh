@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Bookings (
 CREATE TABLE IF NOT EXISTS dwh_detailed.Sat_Tickets (
     Ticket_HK UUID NOT NULL,                   -- Ссылка на Hub_Tickets
     passenger_id character VARYING(20) NOT NULL,
-	passanger_name text NOT NULL,
+	passenger_name text NOT NULL,
 	contact_data jsonb DEFAULT null,
     Load_DTS TIMESTAMP WITH TIME ZONE NOT NULL, -- Временная метка загрузки
     Record_Source VARCHAR(50) NOT NULL,        -- Источник данных
