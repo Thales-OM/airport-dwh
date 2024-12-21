@@ -44,7 +44,7 @@ def load_data(**kwargs):
     """)
 
     # Insert the extracted data into the temporary table
-    insert_temp_query = "INSERT INTO temp_airport_traffic VALUES %s"
+    insert_temp_query = "INSERT INTO temp_airport_traffic VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
     target_cursor.executemany(insert_temp_query, extracted_data)
 
     # Insert data from the temporary table into the target table
