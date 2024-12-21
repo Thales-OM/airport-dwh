@@ -44,8 +44,13 @@ def load_data(**kwargs):
     """)
 
     # Insert the extracted data into the temporary table
-    insert_temp_query = "INSERT INTO temp_frequent_flyers VALUES %s"
+    insert_temp_query = "INSERT INTO temp_frequent_flyers VALUES (%s, %s, %s, %s, %s, %s, %s)"
     target_cursor.executemany(insert_temp_query, extracted_data)
+
+    # Clear target table
+    target_cursor.execute("""
+        DELETE FROM presentation.frequent_flyers;
+    """)
 
     # Insert data from the temporary table into the target table
     target_cursor.execute("""
