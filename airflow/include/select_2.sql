@@ -22,6 +22,7 @@ INNER JOIN
         ON lfa.Flight_HK = f.Flight_HK
         AND date_trunc('day', CURRENT_TIMESTAMP) - INTERVAL '1 second' -- Вчерашний день относительно сегодняшней business_dt
                 BETWEEN f.Effective_From AND f.Effective_To
+        AND f.Actual_Departure is not NULL
 LEFT JOIN 
     dwh_detailed.Link_Tickets_Flights ltf 
         ON f.Flight_HK = ltf.Flight_HK
@@ -36,10 +37,10 @@ SELECT
     f.Actual_Departure AS flight_date,
     LEAST(a1.Airport_Code, a2.Airport_Code) AS airport_code,
     GREATEST(a1.Airport_Code, a2.Airport_Code) AS linked_airport_code,
-    COUNT(DISTINCT lfa.Flight_HK) FILTER (WHERE a1.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS flights_in,
-    COUNT(DISTINCT lfa.Flight_HK) FILTER (WHERE a2.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS flights_out,
-    COUNT(DISTINCT ltf.Ticket_HK) FILTER (WHERE a1.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS passengers_in,
-    COUNT(DISTINCT ltf.Ticket_HK) FILTER (WHERE a2.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS passengers_out
+    COUNT(DISTINCT lfa.Flight_HK) FILTER (WHERE a2.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS flights_in,
+    COUNT(DISTINCT lfa.Flight_HK) FILTER (WHERE a1.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS flights_out,
+    COUNT(DISTINCT ltf.Ticket_HK) FILTER (WHERE a2.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS passengers_in,
+    COUNT(DISTINCT ltf.Ticket_HK) FILTER (WHERE a1.Airport_Code = GREATEST(a1.Airport_Code, a2.Airport_Code)) AS passengers_out
 FROM 
     dwh_detailed.Link_Flights_Airports lfa
 INNER JOIN 
@@ -53,6 +54,7 @@ INNER JOIN
         ON lfa.Flight_HK = f.Flight_HK
         AND date_trunc('day', CURRENT_TIMESTAMP) - INTERVAL '1 second' -- Вчерашний день относительно сегодняшней business_dt
                 BETWEEN f.Effective_From AND f.Effective_To
+        AND f.Actual_Departure is not NULL
 LEFT JOIN 
     dwh_detailed.Link_Tickets_Flights ltf 
         ON f.Flight_HK = ltf.Flight_HK
