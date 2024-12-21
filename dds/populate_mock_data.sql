@@ -56,11 +56,11 @@ INSERT INTO dwh_detailed.Link_Tickets_Bookings (Tickets_Bookings_HK, Ticket_HK, 
 
 -- Insert mock data into Link_Tickets_Flights
 INSERT INTO dwh_detailed.Link_Tickets_Flights (Tickets_Flights_HK, Ticket_HK, Flight_HK, Load_DTS, Record_Source) VALUES
-(md5('TICKET001' || '+' || 'AA101')::UUID, md5('TICKET001')::UUID, md5('1')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
-(md5('TICKET002' || '+' || 'AA102')::UUID, md5('TICKET002')::UUID, md5('2')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
-(md5('TICKET003' || '+' || 'AA103')::UUID, md5('TICKET003')::UUID, md5('3')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
-(md5('TICKET004' || '+' || 'AA104')::UUID, md5('TICKET004')::UUID, md5('4')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
-(md5('TICKET005' || '+' || 'AA105')::UUID, md5('TICKET005')::UUID, md5('5')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master');
+(md5('TICKET001' || '+' || 'AA101')::UUID, md5('TICKET001')::UUID, md5('AA101')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
+(md5('TICKET002' || '+' || 'AA102')::UUID, md5('TICKET002')::UUID, md5('AA102')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
+(md5('TICKET003' || '+' || 'AA103')::UUID, md5('TICKET003')::UUID, md5('AA103')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
+(md5('TICKET004' || '+' || 'AA104')::UUID, md5('TICKET004')::UUID, md5('AA104')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master'),
+(md5('TICKET005' || '+' || 'AA105')::UUID, md5('TICKET005')::UUID, md5('AA105')::UUID, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master');
 
 -- Insert mock data into Sat_Airports
 INSERT INTO dwh_detailed.Sat_Airports (Airport_HK, Airport_Code, Airport_Name, City, Coordinates_Lon, Coordinates_Lat, Timezone, Load_DTS, Record_Source, Effective_From, Effective_To) VALUES
@@ -80,11 +80,11 @@ INSERT INTO dwh_detailed.Sat_Aircrafts (Aircraft_HK, Aircraft_Code, Model, Range
 
 -- Insert mock data into Sat_Flights
 INSERT INTO dwh_detailed.Sat_Flights (Flight_HK, Flight_No, Scheduled_Departure, Scheduled_Arrival, Status, Actual_Departure, Actual_Arrival, Load_DTS, Record_Source, Effective_From, Effective_To) VALUES
-(md5('AA101')::UUID, 'AA101', '2023-10-01 10:00:00-04', '2023-10-01 12:00:00-04', 'On Time', '5999-01-01 00:00:00'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
-(md5('AA102')::UUID, 'AA102', '2023-10-02 14:00:00-04', '2023-10-02 16:00:00-04', 'Delayed', '5999-01-01 00:00:00'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
-(md5('AA103')::UUID, 'AA103', '2023-10-03 18:00:00-04', '2023-10-03 20:00:00-04', 'Cancelled', '5999-01-01 00:00:00'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
-(md5('AA104')::UUID, 'AA104', '2023-10-04 22:00:00-04', '2023-10-05 00:00:00-04', 'On Time', '5999-01-01 00:00:00'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
-(md5('AA105')::UUID, 'AA105', '2023-10-05 08:00:00-04', '2023-10-05 10:00:00-04', 'On Time', '5999-01-01 00:00:00'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP);
+(md5('AA101')::UUID, 'AA101', '2023-10-01 10:00:00-04', '2023-10-01 12:00:00-04', 'On Time', '2023-10-01 10:00:00-04', '2023-10-01 12:00:00-04', '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
+(md5('AA102')::UUID, 'AA102', '2023-10-02 14:00:00-04', '2023-10-02 16:00:00-04', 'Delayed', '2023-10-02 15:00:00-04', '2023-10-02 17:00:00-04', '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
+(md5('AA103')::UUID, 'AA103', '2023-10-03 18:00:00-04', '2023-10-03 20:00:00-04', 'Cancelled', NULL, NULL, '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
+(md5('AA104')::UUID, 'AA104', '2023-10-04 22:00:00-04', '2023-10-05 00:00:00-04', 'On Time', '2023-10-04 22:00:00-04', '2023-10-05 00:00:00-04', '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP),
+(md5('AA105')::UUID, 'AA105', '2023-10-05 08:00:00-04', '2023-10-05 10:00:00-04', 'On Time', '2023-10-05 08:00:00-04', '2023-10-05 10:00:00-04', '2024-12-01 00:00:00-04'::TIMESTAMP, 'postgres_master', '2024-12-01 00:00:00-04'::TIMESTAMP, '5999-01-01 00:00:00'::TIMESTAMP);
 
 -- Insert mock data into Sat_Bookings
 INSERT INTO dwh_detailed.Sat_Bookings (Booking_HK, Book_Date, Total_Amount, Load_DTS, Record_Source, Effective_From, Effective_To) VALUES

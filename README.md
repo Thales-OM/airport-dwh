@@ -50,3 +50,10 @@ This command will execute the SQL statements contained in the task_view.sql file
 - `http://localhost:8080`
 
 Enable DAGs regular runs to launch ETL tasks loading data into `db_analytical`
+
+## View analytical dashboards in Grafana UI
+- `http://localhost:3000`
+
+*(no Auth needed - disabled for dev purposes; dashboards and datasources are provisioned automatically)*
+
+Also see `./dashboard_sample_views` directory for screenshots of ready dashboards (in case you encounter error loading the Grafana UI)
