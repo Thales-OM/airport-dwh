@@ -1,0 +1,1 @@
+SELECT * FROM dwh_detailed.Hub_Flights;

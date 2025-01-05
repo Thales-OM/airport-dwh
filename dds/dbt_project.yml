@@ -1,0 +1,63 @@
+name: 'dds'  # Name of your dbt project
+version: '1.0'          # Version of your dbt project
+profile: 'dds'  # Name of the profile defined in profiles.yml
+
+# This section defines the configurations for your models
+model-paths: ["models"]  # Path to your models directory
+source-paths: ["sources"]  # Path to your sources directory (if you have one)
+analysis-paths: ["analysis"]  # Path to your analysis directory (if you have one)
+test-paths: ["tests"]  # Path to your tests directory
+macro-paths: ["macros"]  # Path to your macros directory
+data-paths: ["data"]  # Path to your data files (if you have any)
+
+# This section defines the configurations for your models
+models:
+  dds:  # This should match the name of your project
+    +materialized: table  # Default materialization for all models
+    +schema: dwh_detailed  # Default schema for all models
+    hubs:  # Specific configurations for hubs
+      +materialized: table
+    links:  # Specific configurations for links
+      +materialized: table
+    satellites:  # Specific configurations for satellites
+      +materialized: table
+
+# This section defines the configurations for your seeds (if you have any)
+seeds:
+  dds:
+    +schema: dwh_detailed  # Schema for seeds
+    +materialized: table  # Materialization for seeds
+
+# This section defines the configurations for your snapshots (if you have any)
+snapshots:
+  dds:
+    +target_schema: dwh_detailed  # Schema for snapshots
+    +strategy: timestamp  # Strategy for snapshots (e.g., timestamp, check)
+    +updated_at: updated_at  # Column to track updates
+
+# # This section defines the configurations for your tests
+# tests:
+#   dds:
+#     +schema: dwh_detailed  # Schema for tests
+
+# This section defines the configurations for your documentation
+docs:
+  dds:
+    +schema: dwh_detailed  # Schema for documentation
+
+# This section defines the configurations for your macros
+macros:
+  dds:
+    +schema: dwh_detailed  # Schema for macros
+
+# This section defines the configurations for your analysis
+analysis:
+  dds:
+    +schema: dwh_detailed  # Schema for analysis
+
+# This section defines the configurations for your data files
+data:
+  dds:
+    +schema: dwh_detailed  # Schema for data files
+
+# Additional configurations can be added as needed
