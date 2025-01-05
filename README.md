@@ -20,7 +20,7 @@ If it for some reason fails 😢 - run the default docker compose command in the
 
 bash:
 ```
-./docker-init.sh
+docker compose up --build
 ```
 (but replication from `postgres_master` -> `postgres_replica` will not work 😉 AND you will need to add `dwh_dds` and `db_analytical` connectors to Apache Airflow manually via the Airflow UI)
 
